@@ -7,7 +7,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Startup Name Generator',
+      title: 'Day to day, get your habit on.',
+      theme: new ThemeData(          // Add the 3 lines from here...
+        primaryColor: Colors.white,
+      ),
       home: RandomWords(),
     );
   }
@@ -15,7 +18,7 @@ class MyApp extends StatelessWidget {
 
 class RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
-  final Set<WordPair> _saved = new Set<WordPair>();   // Add this line.
+  final Set<WordPair> _saved = new Set<WordPair>(); // Add this line.
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
@@ -23,7 +26,11 @@ class RandomWordsState extends State<RandomWords> {
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text('Startup Name Generator'),
+        title: Text('Day to day'),
+        actions: <Widget>[
+          // Add 3 lines from here...
+          new IconButton(icon: const Icon(Icons.list), onPressed: _pushSaved),
+        ],
       ),
       body: _buildSuggestions(),
     );
@@ -44,18 +51,19 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
-    final bool alreadySaved = _saved.contains(pair);  // Add this line.
+    final bool alreadySaved = _saved.contains(pair); // Add this line.
 
     return ListTile(
       title: Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
-      trailing: new Icon(   // Add the lines from here...
-        alreadySaved ? Icons.check_box : Icons.check_box_outline_blank,
-        color: alreadySaved ? Colors.green : null
-      ),
-      onTap: () {      // Add 9 lines from here...
+      trailing: new Icon(
+          // Add the lines from here...
+          alreadySaved ? Icons.check_box : Icons.check_box_outline_blank,
+          color: alreadySaved ? Colors.green : null),
+      onTap: () {
+        // Add 9 lines from here...
         setState(() {
           if (alreadySaved) {
             _saved.remove(pair);
@@ -64,6 +72,37 @@ class RandomWordsState extends State<RandomWords> {
           }
         });
       },
+    );
+  }
+
+  void _pushSaved() {
+    Navigator.of(context).push(
+      new MaterialPageRoute<void>(
+        // Add 20 lines from here...
+        builder: (BuildContext context) {
+          final Iterable<ListTile> tiles = _saved.map(
+            (WordPair pair) {
+              return new ListTile(
+                title: new Text(
+                  pair.asPascalCase,
+                  style: _biggerFont,
+                ),
+              );
+            },
+          );
+          final List<Widget> divided = ListTile.divideTiles(
+            context: context,
+            tiles: tiles,
+          ).toList();
+          return new Scaffold(
+            // Add 6 lines from here...
+            appBar: new AppBar(
+              title: const Text('Saved Suggestions'),
+            ),
+            body: new ListView(children: divided),
+          );
+        },
+      ), // ... to here.
     );
   }
 }
