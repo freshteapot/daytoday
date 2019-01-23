@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
 
 class RandomWordsState extends State<RandomWords> {
   final _suggestions = <WordPair>[];
-
+  final Set<WordPair> _saved = new Set<WordPair>();   // Add this line.
   final _biggerFont = const TextStyle(fontSize: 18.0);
 
   @override
@@ -44,11 +44,26 @@ class RandomWordsState extends State<RandomWords> {
   }
 
   Widget _buildRow(WordPair pair) {
+    final bool alreadySaved = _saved.contains(pair);  // Add this line.
+
     return ListTile(
       title: Text(
         pair.asPascalCase,
         style: _biggerFont,
       ),
+      trailing: new Icon(   // Add the lines from here...
+        alreadySaved ? Icons.check_box : Icons.check_box_outline_blank,
+        color: alreadySaved ? Colors.green : null
+      ),
+      onTap: () {      // Add 9 lines from here...
+        setState(() {
+          if (alreadySaved) {
+            _saved.remove(pair);
+          } else {
+            _saved.add(pair);
+          }
+        });
+      },
     );
   }
 }
